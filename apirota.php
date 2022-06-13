@@ -11,11 +11,8 @@
             'Content-Type: application/json',
             'x-li-format: json'
         ],
-        //CURLOPT_XOAUTH2_BEARER => 'c5948058ac931c18ee94b387df93bad6d68cfdbf',
         CURLOPT_POSTFIELDS => $request,
     ];
-
-    
     
     $ch = curl_init();
     curl_setopt_array($ch, $curlOptions);
@@ -23,8 +20,6 @@
     curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BEARER);
     curl_setopt($ch,CURLOPT_XOAUTH2_BEARER, '79a9e5b3b26a793f0b7d3c596dafb6ded48fa7c2');
     $rota = json_decode(curl_exec($ch));;
-
-
 ?>
 
 <!doctype html>
@@ -48,10 +43,7 @@
 <h1>Teste API</h1>
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
-<?php
-echo $rota->descricao;
-
-?>
+<?php echo $rota->descricao; ?>
 
 
   </body>

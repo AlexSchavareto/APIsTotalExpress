@@ -1,9 +1,5 @@
 <?php
-    $request = '{
-        "grant_type": "password",
-        "username": "hidrogenio-api",
-        "password": "UaN8q@uun"
-    }';
+    $request = '{"grant_type": "password","username": "hidrogenio-api","password": "UaN8q@uun"}';
     
     $curlOptions = [
         CURLOPT_URL => 'https://apis.totalexpress.com.br/ics-seguranca/v1/oauth2/tokenGerar',
@@ -19,37 +15,29 @@
     $ch = curl_init();
     curl_setopt_array($ch, $curlOptions);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $response = json_decode(curl_exec($ch));
+    $token = json_decode(curl_exec($ch));
     $ch = curl_close($ch);
-    if (isset($response->access_token)){
-        $bearerToken = $response->access_token;
-        $request = '{
-            "reid": "28223",
-            "cep": "38755000"
-            }';
-        
-        $curlOptions = [
-            CURLOPT_URL => 'https://apis.totalexpress.com.br/ics-edi/v1/coleta/smartLabel/rota/buscar',
-            CURLOPT_POST => true,
-            CURLOPT_HTTPHEADER => [
-                'Content-Type: application/json',
-                'x-li-format: json'
-            ],
-            //CURLOPT_XOAUTH2_BEARER => 'c5948058ac931c18ee94b387df93bad6d68cfdbf',
-            CURLOPT_POSTFIELDS => $request,
-        ];
-    
-        
-        
-        $ch = curl_init();
-        curl_setopt_array($ch, $curlOptions);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BEARER);
-        curl_setopt($ch,CURLOPT_XOAUTH2_BEARER,'79a9e5b3b26a793f0b7d3c596dafb6ded48fa7c2');
-        $rota = json_decode(curl_exec($ch));
-    }else{ 
-        echo "falha";
-    }
+        if (isset($token->access_token)){
+            $bearerToken = $token->access_token;
+            $request = '{"reid": "28223","cep": "38755000"}';
+
+            $curlOptions = [
+                CURLOPT_URL => 'https://apis.totalexpress.com.br/ics-edi/v1/coleta/smartLabel/rota/buscar',
+                CURLOPT_POST => true,
+                CURLOPT_HTTPHEADER => [
+                    'Content-Type: application/json',
+                    'x-li-format: json'
+                ],
+                CURLOPT_POSTFIELDS => $request,
+            ];
+
+            $ch = curl_init();
+            curl_setopt_array($ch, $curlOptions);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BEARER);
+            curl_setopt($ch,CURLOPT_XOAUTH2_BEARER, $token->access_token);
+            $rota = json_decode(curl_exec($ch));
+
 ?>
 
 <!doctype html>
@@ -60,13 +48,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-
     <title>Guia do Xavá</title>
   </head>
   <body>
     
-
-
 <?php require_once("assets/head.php"); 
       require_once("geradordesenha.php");
       require_once("modals.php");?>
@@ -74,17 +59,19 @@
 <h1>Teste API</h1>
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
-<?php
-echo $response->access_token;
-?>
+<?php echo $token->access_token . "<hr>"; ?>
 
-<hr>
+<?php if(isset($rota->descricao)){
+    echo $rota->descricao;
+}else {
+    echo "nada";
+}
+    ?>
 
-
-<?php
-
-echo $rota->descricao;
-
+<?php 
+}else{ 
+    echo "Falha ao Conectar na API";
+    }
 ?>
 
   </body>
